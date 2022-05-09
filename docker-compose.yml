@@ -1,0 +1,11 @@
+version: '2'
+services:
+  google-assistant-lights:
+    image: amcolash/google-assistant-lights
+    build: ./
+    container_name: google-assistant-lights
+    restart: unless-stopped
+    network_mode: 'host'
+    volumes:
+      - ./devicecredentials.json:/usr/src/app/devicecredentials.json
+    entrypoint: npm start
