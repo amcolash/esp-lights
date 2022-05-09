@@ -1,4 +1,4 @@
-#include <creds.h>
+#include "creds.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 
@@ -28,7 +28,7 @@ void setupPins() {
 }
 
 void setupWifi() {
-  WiFi.begin(SSID, PASSWORD);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 
   while (WiFi.status() != WL_CONNECTED) {
     Serial.print(".");

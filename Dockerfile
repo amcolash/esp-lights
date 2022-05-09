@@ -5,7 +5,7 @@ FROM mhart/alpine-node:14
 WORKDIR /usr/src/app
 
 # Copy source code
-COPY . ./
+COPY ./server/ ./
 
 # Install deps
 RUN npm ci
