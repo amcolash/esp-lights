@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+// Taken from: https://github.com/googlesamples/assistant-sdk-nodejs
+
 'use strict';
 const path = require('path');
 const grpc = require('grpc');
