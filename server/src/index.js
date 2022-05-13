@@ -16,7 +16,7 @@ const assistant = new GoogleAssistant(CREDENTIALS);
 
 // List of commands to run in certain scenarios
 const turnOn = ['run lights on scene', 'turn on fish', 'turn on ping pong'];
-const turnOff = ['run lights off scene', 'turn off fish', 'turn off ping pong'];
+const turnOff = ['run lightswitch off scene', 'turn off fish', 'turn off ping pong'];
 
 // Helper to run a list of commands with assistant
 function runCommands(commands) {
