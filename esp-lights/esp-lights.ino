@@ -5,6 +5,8 @@
 #define ON_BUTTON D5
 #define OFF_BUTTON D7
 
+#define SWITCH 0
+
 int state = -1;
 
 void setupSerial() {
@@ -46,8 +48,8 @@ void updateState() {
   WiFiClient wifiClient;
   HTTPClient http;
 
-  if (state == 1) http.begin(wifiClient, String(SERVER) + "/on");
-  else http.begin(wifiClient, String(SERVER) + "/off");
+  if (state == 1) http.begin(wifiClient, String(SERVER) + "/on?switch=" + String(SWITCH));
+  else http.begin(wifiClient, String(SERVER) + "/off?switch=" + String(SWITCH));
 
   http.GET();
   http.end();
