@@ -6,10 +6,9 @@
   "name": "google-assistant-nodejs",
   "version": "0.0.1",
   "dependencies": {
+    "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "google-auth-library": "0.12.0",
-    "google-proto-files": "^0.15.0",
-    "google-protobuf": "^3.3.0",
-    "grpc": "^1.0.0"
+    "node-cron": "^3.0.0",
+    "node-fetch": "^2.6.7"
   }
 }

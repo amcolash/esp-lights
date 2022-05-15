@@ -1,57 +1,47 @@
+const cron = require('node-cron');
+const fetch = require('node-fetch');
 const express = require('express');
-const app = express();
-const GoogleAssistant = require('./googleassistant');
+const { join } = require('path');
+
+require('dotenv').config({ path: join(__dirname, '../.env') });
+
+const { getToken, runScene } = require('./tuya');
+const { scenes, urls } = require('./values');
 
 const port = 8266;
 
-// Set up the google assistant
-const deviceCredentials = require(`${__dirname}/../auth/devicecredentials.json`);
-const CREDENTIALS = {
-  client_id: deviceCredentials.client_id,
-  client_secret: deviceCredentials.client_secret,
-  refresh_token: deviceCredentials.refresh_token,
-  type: 'authorized_user',
-};
-const assistant = new GoogleAssistant(CREDENTIALS);
+// On start, refresh token if expired
+getToken();
 
-// List of commands to run in certain scenarios
-const turnOn = ['run lights on scene', 'turn on fish', 'turn on ping pong'];
-const turnOff = ['run lightswitch off scene', 'turn off fish', 'turn off ping pong'];
+// Refresh token every hour
+cron.schedule('0 0/1 * * *', getToken);
 
-// Helper to run a list of commands with assistant
-function runCommands(commands) {
-  // Reverse the order as things seem to run LIFO
-  commands.reverse().forEach((c) => {
-    assistant
-      .assist(c)
-      .then((res) => {
-        console.log(c, res);
-      })
-      .catch((err) => console.error(err));
-  });
-}
-
+const app = express();
 app.get('/on', (req, res) => {
-  console.log(`${new Date().toLocaleString()}: state[on]`);
-
-  runCommands(turnOn);
+  console.log(`${new Date().toLocaleString()}: state [on], switch [${req.query.switch}]`);
+  turnOn();
   res.sendStatus(200);
 });
 
 app.get('/off', (req, res) => {
-  console.log(`${new Date().toLocaleString()}: state[off]`);
-
-  runCommands(turnOff);
+  console.log(`${new Date().toLocaleString()}: state [off], switch [${req.query.switch}]`);
+  turnOff();
   res.sendStatus(200);
 });
-
-// app.get('/custom', (req, res) => {
-//   console.log(`${new Date().toLocaleString()}: ${req.query.cmd}`);
-
-//   runCommands([req.query.cmd]);
-//   res.sendStatus(200);
-// });
 
 app.listen(port, () => {
   console.log(`ESP-lights listening on port ${port}`);
 });
+
+function turnOn() {
+  runScene(scenes.lightsOn.id);
+  fetch(urls.fish.on);
+  fetch(urls.pingpong.on);
+}
+
+function turnOff() {
+  runScene(scenes.lightswitchOff.id);
+  fetch(urls.sunset.off);
+  fetch(urls.fish.off);
+  fetch(urls.pingpong.off);
+}
