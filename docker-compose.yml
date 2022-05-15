@@ -7,5 +7,5 @@ services:
     restart: unless-stopped
     network_mode: 'host'
     volumes:
-      - ./server/auth/devicecredentials.json:/usr/src/app/auth/devicecredentials.json
+      - ./server/auth/auth.json:/usr/src/app/auth/auth.json
     entrypoint: npm start
