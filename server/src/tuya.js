@@ -116,9 +116,6 @@ function getDevices() {
     method: 'post',
   })
     .then((res) => res.json())
-    .then((res) => {
-      console.log(res);
-    })
     .catch((err) => console.error(err));
 }
 
@@ -153,4 +150,4 @@ function runScene(sceneId) {
   adjustDevice(sceneId, 'turnOnOff', 'value', 1);
 }
 
-module.exports = { runScene, getToken };
+module.exports = { runScene, getToken, getDevices };
