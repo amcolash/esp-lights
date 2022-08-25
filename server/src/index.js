@@ -40,13 +40,13 @@ app.listen(port, () => {
 
 function turnOn() {
   runScene(scenes.lightsOn.id);
-  fetch(urls.fish.on);
-  fetch(urls.pingpong.on);
+  // fetch(urls.fish.on);
+  // fetch(urls.pingpong.on);
 }
 
 function turnOff() {
   runScene(scenes.lightswitchOff.id);
-  fetch(urls.sunset.off);
-  fetch(urls.fish.off);
-  fetch(urls.pingpong.off);
+  // fetch(urls.sunset.off);
+  // fetch(urls.fish.off);
+  // fetch(urls.pingpong.off);
 }
