@@ -150,4 +150,4 @@ function runScene(sceneId) {
   adjustDevice(sceneId, 'turnOnOff', 'value', 1);
 }
 
-module.exports = { runScene, getToken, getDevices };
+module.exports = { runScene, adjustDevice, getToken, getDevices };

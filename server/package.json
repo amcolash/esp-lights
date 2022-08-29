@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js --ignore auth/"
   },
   "name": "google-assistant-nodejs",
   "version": "0.0.1",

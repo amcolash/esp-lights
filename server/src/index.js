@@ -5,7 +5,7 @@ const { join } = require('path');
 
 require('dotenv').config({ path: join(__dirname, '../.env') });
 
-const { getToken, runScene, getDevices } = require('./tuya');
+const { getToken, runScene, getDevices, adjustDevice } = require('./tuya');
 const { scenes, urls } = require('./values');
 
 const port = 8266;
@@ -26,6 +26,11 @@ app.get('/on', (req, res) => {
 app.get('/off', (req, res) => {
   console.log(`${new Date().toLocaleString()}: state [off], switch [${req.query.switch}]`);
   turnOff();
+  res.sendStatus(200);
+});
+
+app.post('/device/:id', (req, res) => {
+  adjustDevice(req.params.id, 'turnOnOff', 'value', req.query.value);
   res.sendStatus(200);
 });
 
