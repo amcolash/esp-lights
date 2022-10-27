@@ -1,6 +1,7 @@
 #include "creds.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
+#include <WiFiManager.h>
 
 #define ON_BUTTON D5
 #define OFF_BUTTON D7
@@ -30,14 +31,15 @@ void setupPins() {
 }
 
 void setupWifi() {
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+    //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
+  WiFiManager wm;
 
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(500);
+  bool res = wm.autoConnect("ESP-Lights");
+  if (!res) {
+    Serial.println("Failed to connect");
+    ESP.restart();
   }
 
-  Serial.println();
   Serial.print("Connected, IP Address: ");
   Serial.println(WiFi.localIP());
 }
