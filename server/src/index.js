@@ -1,5 +1,4 @@
 const cron = require('node-cron');
-const fetch = require('node-fetch');
 const express = require('express');
 const { join } = require('path');
 
@@ -13,8 +12,8 @@ const port = 8266;
 // On start, refresh token if expired
 getToken();
 
-// Refresh token every hour
-cron.schedule('0 0/1 * * *', getToken);
+// Refresh token at 6am every day (token is supposed to last for 24 hours)
+cron.schedule('0 6 * * *', getToken);
 
 const app = express();
 app.get('/on', (req, res) => {
