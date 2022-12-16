@@ -12,8 +12,8 @@ const port = 8266;
 // On start, refresh token if expired
 getToken();
 
-// Refresh token at 6am every day (token is supposed to last for 24 hours)
-cron.schedule('0 6 * * *', getToken);
+// Refresh token at every 4 hours (not sure how long token is good for?)
+cron.schedule('0 */4 * * *', getToken);
 
 const app = express();
 app.get('/on', (req, res) => {
