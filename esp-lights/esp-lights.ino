@@ -1,35 +1,25 @@
 #include "creds.h"
+#include "ClickButton.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiManager.h>
 
-#define ON_BUTTON D5
-#define OFF_BUTTON D7
+#define ON_PIN D5
+#define OFF_PIN D7
 
-int state = -1;
+ClickButton onButton(ON_PIN, LOW, CLICKBTN_PULLUP);
+ClickButton offButton(OFF_PIN, LOW, CLICKBTN_PULLUP);
 
 void setupSerial() {
-  Serial.begin(115200);
+  Serial.begin(19200);
 
   delay(200);
   Serial.println("\n-----------------");
   Serial.println("Turning On");
 }
 
-
-void IRAM_ATTR turnOn() { state = 1; }
-void IRAM_ATTR turnOff() { state = 0; }
-
-void setupPins() {
-  pinMode(ON_BUTTON, INPUT_PULLUP);
-  pinMode(OFF_BUTTON, INPUT_PULLUP);
-
-  attachInterrupt(digitalPinToInterrupt(ON_BUTTON), turnOn, FALLING);
-  attachInterrupt(digitalPinToInterrupt(OFF_BUTTON), turnOff, FALLING);
-}
-
 void setupWifi() {
-    //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
+  //WiFiManager, Local intialization. Once its business is done, there is no need to keep it around
   WiFiManager wm;
 
   bool res = wm.autoConnect("ESP-Lights");
@@ -42,7 +32,7 @@ void setupWifi() {
   Serial.println(WiFi.localIP());
 }
 
-void updateState() {
+void updateState(uint8_t state) {
   Serial.println("Sending data to server [" + String(state) + "]");
 
   // WiFiClientSecure wifiClient;
@@ -52,31 +42,27 @@ void updateState() {
   HTTPClient http;
 
   if (state == 1) http.begin(wifiClient, String(SERVER) + String(WEBHOOK_ON));
+  else if (state == 2) http.begin(wifiClient, String(SERVER) + String(WEBHOOK_ON_2));
   else http.begin(wifiClient, String(SERVER) + String(WEBHOOK_OFF));
 
   int status = http.GET();
   if (status == HTTP_CODE_OK) Serial.println("Success");
-  else Serial.println("Something went wrong");
+  else Serial.println("Something went wrong" + String(status));
   
   http.end();
-
-  state = -1;
 }
 
 void setup() {
   setupSerial();
-  setupPins();
   setupWifi();
 }
 
-long nextPossibleUpdate = 0;
 void loop() {
-  if (millis() < nextPossibleUpdate) {
-    state = -1;
-  }    
+  onButton.Update();
+  offButton.Update();
 
-  if (state != -1) {
-    updateState();
-    nextPossibleUpdate = millis() + 1000;
-  }
+  if (offButton.clicks > 0) updateState(0);
+
+  if (onButton.clicks == 1) updateState(1);
+  if (onButton.clicks == 2) updateState(2);
 }
