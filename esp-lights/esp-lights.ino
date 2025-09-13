@@ -6,8 +6,6 @@
 #define ON_BUTTON D5
 #define OFF_BUTTON D7
 
-#define SWITCH 0
-
 int state = -1;
 
 void setupSerial() {
@@ -47,13 +45,19 @@ void setupWifi() {
 void updateState() {
   Serial.println("Sending data to server [" + String(state) + "]");
 
+  // WiFiClientSecure wifiClient;
+  // wifiClient.setInsecure();
   WiFiClient wifiClient;
+
   HTTPClient http;
 
-  if (state == 1) http.begin(wifiClient, String(SERVER) + "/on?switch=" + String(SWITCH));
-  else http.begin(wifiClient, String(SERVER) + "/off?switch=" + String(SWITCH));
+  if (state == 1) http.begin(wifiClient, String(SERVER) + String(WEBHOOK_ON));
+  else http.begin(wifiClient, String(SERVER) + String(WEBHOOK_OFF));
 
-  http.GET();
+  int status = http.GET();
+  if (status == HTTP_CODE_OK) Serial.println("Success");
+  else Serial.println("Something went wrong");
+  
   http.end();
 
   state = -1;
@@ -65,11 +69,14 @@ void setup() {
   setupWifi();
 }
 
+long nextPossibleUpdate = 0;
 void loop() {
+  if (millis() < nextPossibleUpdate) {
+    state = -1;
+  }    
+
   if (state != -1) {
     updateState();
-
-    // Wait for a moment just in case
-    delay(1000);
+    nextPossibleUpdate = millis() + 1000;
   }
 }

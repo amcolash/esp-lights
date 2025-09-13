@@ -30,6 +30,7 @@ function writeAuth(data) {
 }
 
 function getToken() {
+  console.log(new Date().toLocaleString() + ': Getting Token');
   // if (!auth.accessToken || Date.now() > auth.expires) {
   if (auth.refreshToken) {
     return refresh();
@@ -41,8 +42,13 @@ function getToken() {
   // return new Promise((resolve, reject) => resolve());
 }
 
+function revokeAuth() {
+  console.log(new Date().toLocaleString() + ': Revoke Auth');
+  writeAuth({});
+}
+
 function login() {
-  console.log('Logging In');
+  console.log(new Date().toLocaleString() + ': Logging In');
 
   const url = baseurl + 'auth.do';
 
@@ -73,7 +79,7 @@ function login() {
 }
 
 function refresh() {
-  console.log('Refreshing Token');
+  console.log(new Date().toLocaleString() + ': Refreshing Token');
 
   const data = { grant_type: 'refresh_token', refresh_token: auth.refreshToken };
   const formData = Object.entries(data)
@@ -143,11 +149,20 @@ function adjustDevice(device, action, value_name, new_state) {
     body: JSON.stringify(data),
     headers,
     method: 'post',
-  }).catch((err) => console.error(err));
+  })
+    .then((res) => {
+      console.log(res);
+      console.log(res.headers);
+      return res.json();
+    })
+    .then((res) => {
+      console.log(res);
+    })
+    .catch((err) => console.error(err));
 }
 
 function runScene(sceneId) {
-  adjustDevice(sceneId, 'turnOnOff', 'value', 1);
+  return adjustDevice(sceneId, 'turnOnOff', 'value', 1);
 }
 
-module.exports = { runScene, adjustDevice, getToken, getDevices };
+module.exports = { runScene, adjustDevice, getToken, getDevices, revokeAuth };
